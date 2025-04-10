@@ -106,6 +106,8 @@ void webSocketServerEvent(String msg) {
     newGame();
   } else if (msg.contains("exit game")) {
     shouldExit = true; 
+  } else if (msg.contains("destroy all walls")) {
+    destroyAllWalls();
   }
   
   print(msg);
@@ -198,9 +200,10 @@ void drawItems() {
 
 void destroyAllWalls() {
   for (int i = 0; i < gridSize; i ++) {
-     for (int j = 0; i < gridSize; j++) {
+     for (int j = 0; j < gridSize; j++) {
        if (map[i][j] instanceof BreakableBlock) {
           map[i][j].breakBlock(); 
+          map[i][j] = new Grass(i, j);
        }
      }
   }

@@ -75,7 +75,7 @@ Since, I have already included the library in my project, there is no need to do
 - Breakable Block: A tile that can be destroyed by the player’s bomb, potentially revealing hidden items.
 
 
-#### Items
+#### Collectable Items
 - There are two types of items that the player can collect:
 
 - BombPower: Increases the player's bomb power.
@@ -85,3 +85,15 @@ Since, I have already included the library in my project, there is no need to do
 
 #### Enemies
 Currently, moves randomly since the algorithm is not complete and working on it, but it will be enhanced in the future to include pathfinding algorithms for better movement.
+
+
+### Roadmap
+- **Multiple Enemies:** Add various enemy types with different AI behaviors and spawn mechanics.
+
+- **Bomb Animation:** Implement bomb countdown and explosion animations for better visual feedback.
+
+- **Map Designer:** Create an interface for designing custom maps that can be saved and played.
+
+- **Improve Pathfinding:** Enhance enemy navigation with advanced algorithms like A* or BFS.
+
+- **Voice Controls:** Expand voice commands, such as saying “abracadabra” to destroy all enemies.

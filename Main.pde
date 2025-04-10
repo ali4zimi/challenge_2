@@ -102,7 +102,13 @@ void keyPressed() {
 }
 
 void webSocketServerEvent(String msg) {
-  println(msg);  // Handle WebSocket messages (e.g., for online multiplayer or communication)
+  if (msg.contains("start game")) {
+    newGame();
+  } else if (msg.contains("exit game")) {
+    shouldExit = true; 
+  }
+  
+  print(msg);
 }
 
 // Start a new game by initializing the map, player, and enemies
@@ -187,5 +193,15 @@ void drawExplosions() {
 void drawItems() {
   for (Item item : items) {
     item.draw();  // Draw each item
+  }
+}
+
+void destroyAllWalls() {
+  for (int i = 0; i < gridSize; i ++) {
+     for (int j = 0; i < gridSize; j++) {
+       if (map[i][j] instanceof BreakableBlock) {
+          map[i][j].breakBlock(); 
+       }
+     }
   }
 }

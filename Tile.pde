@@ -10,6 +10,7 @@ abstract class Tile {
   
   // Abstract method to be implemented by subclasses to define how the tile is drawn
   abstract void draw();
+  abstract void breakBlock();
 }
 
 class Wall extends Tile {
@@ -22,6 +23,8 @@ class Wall extends Tile {
     stroke(0); 
     rect(x, y, tileSize, tileSize); 
   }  
+  
+  void breakBlock() {}
 }
 
 class Grass extends Tile {
@@ -33,6 +36,9 @@ class Grass extends Tile {
     fill(#13A002);
     noStroke(); 
     rect(x, y, tileSize, tileSize); 
+  }
+  
+  void breakBlock() {
   }
 }
 

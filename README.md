@@ -15,6 +15,8 @@ and damaging enemies within the blast radius.
 - **Enemies**: Enemies appear on the map and are destroyed by explosions.
 - **Items**: Various power-ups, such as bomb range increases and speed boosts, are scattered around the map.
 
+- **Voice Command**: 
+
 The game includes a main menu where the player can start a new game, resume a paused game, or exit.
 The game also supports WebSocket communication for potential multiplayer features or other integrations.
 
@@ -49,8 +51,8 @@ Since, I have already included the library in my project, there is no need to do
 3. Search for `websocket` and install it
 ![alt text](image-2.png)
 
-
-3. Run the game by selecting the Run button in Processing.
+4. Run the game by selecting the Run button in Processing.
+5. Open `voice_command.html` and allow microphone 
 
 ### Controls
 - Arrow keys: Move the player around the game world.
@@ -58,6 +60,8 @@ Since, I have already included the library in my project, there is no need to do
 - Spacebar: Place bombs to destroy breakable blocks.
 
 - Collect items: Walk over power-ups to collect them.
+
+- Voice Controls: Voice command includes `start game`, and `exit game`
 
 
 ### Game Mechanics

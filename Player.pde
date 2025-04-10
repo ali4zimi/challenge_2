@@ -76,7 +76,7 @@ class Player extends Character {
    */
   void checkItemPickup() {
     for (Item item : items) {
-      if (!item.collected && playerTouches(this, item)) {
+      if (!item.collected && playerTouches(item)) {
         item.applyEffect(player);  // Apply the item's effect on the player
         item.collected = true;     // Mark the item as collected
       }
@@ -86,7 +86,7 @@ class Player extends Character {
   /*
    * Determines if the player has collided with an item by calculating the distance between the player and the item.
    */
-  boolean playerTouches(Player player, Item item) {
+  boolean playerTouches(Item item) {
     return dist(player.x, player.y, item.x + tileSize / 2, item.y + tileSize / 2) < tileSize * 0.5;
   }
 }

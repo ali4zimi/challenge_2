@@ -1,4 +1,4 @@
-// This code is not complete yet. I am still working to improve the AI, and will apply a pathfinding algorithm (like BFS or A*) in future updates.
+// This code is not complete yet. I am still working to improve the AI, and will apply a pathfinding algorithm in future updates.
 
 class Enemy extends Character {
   char direction;                                                  // Current direction the enemy is facing

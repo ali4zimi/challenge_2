@@ -10,53 +10,37 @@ class Explosion {
   }
 
   void drawFlame() {
-    fill(255, 200, 0, 150);  // Yellow-orange, semi-transparent
+    fill(255, 200, 0, 150);
     noStroke();
+    rect(i * tileSize, j * tileSize, tileSize, tileSize);  // Center explosion
 
-    // Draw center
-    rect(i * tileSize, j * tileSize, tileSize, tileSize);
+    spreadExplosion(i, j, 0, -1);  // Up
+    spreadExplosion(i, j, 0, 1);   // Down
+    spreadExplosion(i, j, -1, 0);  // Left
+    spreadExplosion(i, j, 1, 0);   // Right
+  }
 
-    // --- Up ---
+  void spreadExplosion(int i, int j, int di, int dj) {
     for (int d = 1; d <= range; d++) {
-      if (isWall(i, j - d)) break;
-      rect(i * tileSize, (j - d) * tileSize, tileSize, tileSize);
-      checkAndChange(i, j - d);
-      if (map[i][j - d] instanceof BreakableBlock) break;  // Stop after breaking
-    }
+      int x = i + di * d;
+      int y = j + dj * d;
 
-    // --- Down ---
-    for (int d = 1; d <= range; d++) {
-      if (isWall(i, j + d)) break;
-      rect(i * tileSize, (j + d) * tileSize, tileSize, tileSize);
-      checkAndChange(i, j + d);
-      if (map[i][j + d] instanceof BreakableBlock) break;
-    }
+      if (isWall(x, y)) break; // Stop at wall
+      rect(x * tileSize, y * tileSize, tileSize, tileSize);
+      checkAndChange(x, y);
 
-    // --- Left ---
-    for (int d = 1; d <= range; d++) {
-      if (isWall(i - d, j)) break;
-      rect((i - d) * tileSize, j * tileSize, tileSize, tileSize);
-      checkAndChange(i - d, j);
-      if (map[i - d][j] instanceof BreakableBlock) break;
-    }
-
-    // --- Right ---
-    for (int d = 1; d <= range; d++) {
-      if (isWall(i + d, j)) break;
-      rect((i + d) * tileSize, j * tileSize, tileSize, tileSize);
-      checkAndChange(i + d, j);
-      if (map[i + d][j] instanceof BreakableBlock) break;
+      if (map[x][y] instanceof BreakableBlock) break; // Stop if breakable block
     }
   }
 
   // Check if the tile at (i, j) is a breakable block, and change it to grass
-void checkAndChange(int i, int j) {
-  if (map[i][j] instanceof BreakableBlock) {
-    BreakableBlock block = (BreakableBlock) map[i][j];
-    block.breakBlock();  // Reveal item
-    map[i][j] = new Grass(i, j);
+  void checkAndChange(int i, int j) {
+    if (map[i][j] instanceof BreakableBlock) {
+      BreakableBlock block = (BreakableBlock) map[i][j];
+      block.breakBlock();  // Reveal item
+      map[i][j] = new Grass(i, j);
+    }
   }
-}
 
 
   // Check if the tile at (i, j) is a wall

@@ -7,17 +7,6 @@
  * managing power-ups. The player can place bombs, which will explode after a short delay, clearing obstacles 
  * and damaging enemies within the blast radius.
  * 
- * The game includes the following features:
- * - **Grid-based map** with walls, breakable blocks, and grass.
- * - **Player movement**: The player can move around the grid and place bombs.
- * - **Bombs**: The player can place bombs, and after a countdown, they explode, clearing blocks and damaging enemies.
- * - **Explosions**: Explosions propagate in all directions, affecting the surrounding tiles.
- * - **Enemies**: Enemies appear on the map and are destroyed by explosions.
- * - **Items**: Various power-ups, such as bomb range increases and speed boosts, are scattered around the map.
- * 
- * The game includes a main menu where the player can start a new game, resume a paused game, or exit.
- * The game also supports WebSocket communication for potential multiplayer features or other integrations.
- * 
  * Author: Ali Baba Azimi
  * Date: 25.03.2025
  */

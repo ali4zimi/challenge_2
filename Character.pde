@@ -14,8 +14,8 @@ abstract class Character {
    */
   Character(int i, int j) {
     this.i = i;
-    this.j = j; 
-    
+    this.j = j;
+
     // Initialize x, y based on the grid position and tile size
     this.x = i * tileSize + tileSize / 2;
     this.y = j * tileSize + tileSize / 2;
@@ -49,10 +49,10 @@ abstract class Character {
     }
 
     // Only move if there's no collision at the new position
-    if (!collidesWithWall(newX , newY)) {
+    if (!collidesWithWall(newX, newY)) {
       x = newX;
       y = newY;
-      
+
       i = (int) newX / tileSize;
       j = (int) newY / tileSize;
     }
@@ -85,7 +85,7 @@ abstract class Character {
         if (i < 0 || j < 0 || i >= gridSize || j >= gridSize) return true;
 
         // If the tile is a wall or breakable block, check for overlap
-        if (map[i][j] instanceof Wall || map[i][j] instanceof BreakableBlock) {
+        if (isObstacle(i, j)) {
 
           // Tile bounds
           float tileLeft = i * tileSize;
@@ -104,5 +104,9 @@ abstract class Character {
 
     // No collisions with any walls or blocks
     return false;
+  }
+
+  boolean isObstacle(int i, int j) {
+    return map[i][j] instanceof Wall || map[i][j] instanceof BreakableBlock;
   }
 }

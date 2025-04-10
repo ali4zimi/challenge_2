@@ -1,11 +1,7 @@
 # Bomberman Game
 
 ## Overview
-This game is a simplified version of the classic Bomberman game, where the player controls a character 
-in a grid-based environment filled with walls, breakable blocks, bombs, explosions, enemies, and items.
-The goal of the game is to destroy breakable blocks and enemies using bombs while avoiding explosions and 
-managing power-ups. The player can place bombs, which will explode after a short delay, clearing obstacles 
-and damaging enemies within the blast radius.
+This game is a simplified version of the classic Bomberman game, which was one of my childhood favorites. I’ve always wanted to create it myself. In this version, the player controls a character in a grid-based environment filled with walls, breakable blocks, bombs, explosions, enemies, and items. The goal of the game is to destroy breakable blocks and enemies using bombs while avoiding explosions and managing power-ups. The player can place bombs, which will explode after a short delay, clearing obstacles and damaging enemies within the blast radius. Additionally, I plan to add a voice sensor to control the game, making the experience even more interactive.
 
 ## Features
 - **Grid-based map** with walls, breakable blocks, and grass.

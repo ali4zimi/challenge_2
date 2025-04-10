@@ -97,3 +97,5 @@ Currently, moves randomly since the algorithm is not complete and working on it,
 - **Improve Pathfinding:** Enhance enemy navigation with advanced algorithms like A* or BFS.
 
 - **Voice Controls:** Expand voice commands, such as saying “abracadabra” to destroy all enemies.
+
+- **Sound Effects:** Add voice effects e.g for explosion and bomb timer

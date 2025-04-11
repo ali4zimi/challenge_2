@@ -14,22 +14,44 @@ class Explosion {
     noStroke();
     rect(i * tileSize, j * tileSize, tileSize, tileSize);  // Center explosion
 
-    spreadExplosion(i, j, 0, -1);  // Up
-    spreadExplosion(i, j, 0, 1);   // Down
-    spreadExplosion(i, j, -1, 0);  // Left
-    spreadExplosion(i, j, 1, 0);   // Right
+    spreadExplosion(i, j, 0, -1);  // Up Side
+    spreadExplosion(i, j, 0, 1);   // Down Side
+    spreadExplosion(i, j, -1, 0);  // Left Side
+    spreadExplosion(i, j, 1, 0);   // Right Side
   }
 
-  void spreadExplosion(int i, int j, int di, int dj) {
+  void spreadExplosion(int ci, int cj, int di, int dj) {
     for (int d = 1; d <= range; d++) {
-      int x = i + di * d;
-      int y = j + dj * d;
+      int ti = ci + di * d;
+      int tj = cj + dj * d;
 
-      if (isWall(x, y)) break; // Stop at wall
-      rect(x * tileSize, y * tileSize, tileSize, tileSize);
-      checkAndChange(x, y);
+      if (isWall(ti, tj)) break; // Stop at wall
+      rect(ti * tileSize, tj * tileSize, tileSize, tileSize);
+      checkAndChange(ti, tj);
 
-      if (map[x][y] instanceof BreakableBlock) break; // Stop if breakable block
+      for (Bomb bomb : bombs) {
+        if (hitBomb(ti, tj, bomb)) {
+          bomb.explode();
+        }
+      }
+
+      if (hitPlayer(ti, tj)) {
+        player.die();
+        gameState = GameState.LOSE;
+      }
+
+
+
+      for (Enemy enemy : enemies) {
+        if (hitEnemy(ti, tj, enemy)) {
+          enemy.die();
+          gameState = GameState.WIN;
+        }
+      }
+
+
+
+      if (map[ti][tj] instanceof BreakableBlock) break; // Stop if breakable block
     }
   }
 
@@ -42,6 +64,18 @@ class Explosion {
     }
   }
 
+  // Check if explosion hit the player
+  boolean hitPlayer(int row, int col) {
+    return player.row == row && player.col == col;
+  }
+
+  boolean hitEnemy(int row, int col, Enemy enemy) {
+    return enemy.row == row && enemy.col == col;
+  }
+  
+  boolean hitBomb(int row, int col, Bomb bomb) {
+    return bomb.row == row && bomb.col == col;
+  }
 
   // Check if the tile at (i, j) is a wall
   boolean isWall(int i, int j) {

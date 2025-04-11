@@ -1,21 +1,23 @@
 class Bomb {
-  int i, j;             // Tile coordinates
+  int row, col;         // Tile coordinates
   float x, y;           // Pixel coordinates
   float width = tileSize * 0.7;
   float height = tileSize * 0.7;
   int power = 1;
   float timer = 5;        // Countdown in seconds
 
-  Bomb(int i, int j, int power) {
-    this.i = i;
-    this.j = j;
+  Bomb(int row, int col, int power) {
+    this.row = row;
+    this.col = col;
     this.power = power;
     
-    this.x = i * tileSize + tileSize / 2;
-    this.y = j * tileSize + tileSize / 2;
+    this.x = row * tileSize + tileSize / 2;
+    this.y = col * tileSize + tileSize / 2;
   }
 
   void draw() {
+    if (timer == 0) return;
+    
     noStroke();
 
     // Main bomb body
@@ -59,7 +61,7 @@ class Bomb {
   }
 
   void explode() {
-    println("BOOM at tile [" + i + ", " + j + "]");
-    explosions.add(new Explosion(i, j, power));
+    timer = 0;
+    explosions.add(new Explosion(row, col, power));
   }
 }

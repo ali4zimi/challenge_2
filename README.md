@@ -57,7 +57,7 @@ Since, I have already included the library in my project, there is no need to do
 
 - Collect items: Walk over power-ups to collect them.
 
-- Voice Controls: Voice command includes `start game`, `exit game`, and `destroy all walls`
+- Voice Controls: Voice command includes `start game`, `exit game`, and `destroy all blocks`, `kill all enemies`
 
 
 ### Game Mechanics

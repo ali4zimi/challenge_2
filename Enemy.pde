@@ -7,8 +7,8 @@ class Enemy extends Character {
   boolean collision;                                               // Whether the enemy has collided with an obstacle
 
 
-  Enemy(int i, int j) {
-    super(i, j);
+  Enemy(int row, int col) {
+    super(row, col);
     direction = 'l'; // Set initial direction to 'left'
     speed = 5; // Set the movement speed of the enemy
   }
@@ -61,17 +61,17 @@ class Enemy extends Character {
 
   void think() {
     // If the enemy is still moving in the same direction type (horizontal/vertical),
-    // decide whether to change direction or continue in the same pattern.
+    // decide whether to change direction or continue in the same pattern. (still not working as expected, but I am implementing it in the future)
     if (currentDirectionType == previousDirectionType) {
       // If currently moving horizontally, try moving vertically if possible
-      if (currentDirectionType == Orientation.HORIZONTAL && (map[i][j - 1] instanceof Tile || map[i][j + 1] instanceof Tile)) {
+      if (currentDirectionType == Orientation.HORIZONTAL && (map[row][col - 1] instanceof Tile || map[row][col + 1] instanceof Tile)) {
         char[] options = {'u', 'd'}; // Up or Down
         direction = randomDirection(options); // Choose a random vertical direction
         previousDirectionType = currentDirectionType; // Store current direction type for later comparison
         currentDirectionType = Orientation.VERTICAL; // Switch to vertical movement
       }
       // If currently moving vertically, try moving horizontally if possible
-      else if (currentDirectionType == Orientation.VERTICAL && (map[i - 1][j] instanceof Tile || map[i + 1][j] instanceof Tile)) {
+      else if (currentDirectionType == Orientation.VERTICAL && (map[row - 1][col] instanceof Tile || map[row + 1][col] instanceof Tile)) {
         char[] options = {'l', 'r'}; // Left or Right
         direction = randomDirection(options); // Choose a random horizontal direction
         previousDirectionType = currentDirectionType; // Store current direction type
@@ -79,7 +79,6 @@ class Enemy extends Character {
       }
     }
   }
-
 
   void act() {
     // If no collision detected, move the enemy in the chosen direction
@@ -106,8 +105,12 @@ class Enemy extends Character {
     // If the player is alive and the distance between the enemy and player is small enough
     if (player.alive && dist(player.x, player.y, this.x, this.y) < tileSize * 0.5) {
       player.die();
-      gamePaused = true;
+      gameState = GameState.LOSE;
     }
+  }
+
+  void die() {
+    alive = false;
   }
 }
 

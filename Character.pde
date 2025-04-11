@@ -3,22 +3,22 @@
  * This class contains common properties and methods shared between both the player and enemy classes.
  */
 abstract class Character {
-  int i, j;           // Grid coordinates (row, column) on the game map
-  float x, y;         // Real-world coordinates (pixel positions) of the character
-  float health;       // Health points of the character, typically starts at 100
-  float speed;        // Speed at which the character moves (in pixels per frame)
-  boolean alive;      // A flag indicating whether the character is alive or not
+  int row, col;        // Grid coordinates (row, column) on the game map
+  float x, y;          // Real-world coordinates (pixel positions) of the character
+  float health;        // Health points of the character, typically starts at 100
+  float speed;         // Speed at which the character moves (in pixels per frame)
+  boolean alive;       // A flag indicating whether the character is alive or not
 
   /*
    * Constructor to initialize the character with its grid position and default properties.
    */
-  Character(int i, int j) {
-    this.i = i;
-    this.j = j;
+  Character(int row, int col) {
+    this.row = row;
+    this.col = col;
 
     // Initialize x, y based on the grid position and tile size
-    this.x = i * tileSize + tileSize / 2;
-    this.y = j * tileSize + tileSize / 2;
+    this.x = row * tileSize + tileSize / 2;
+    this.y = col * tileSize + tileSize / 2;
 
     this.health = 100;
     this.alive = true;
@@ -53,8 +53,8 @@ abstract class Character {
       x = newX;
       y = newY;
 
-      i = (int) newX / tileSize;
-      j = (int) newY / tileSize;
+      row = (int) newX / tileSize;
+      col = (int) newY / tileSize;
     }
   }
 
@@ -62,7 +62,7 @@ abstract class Character {
    * Checks if the character will collide with a wall or any obstacles at the given position.
    * The character is assumed to have a bounding box, and collision is detected using AABB (Axis-Aligned Bounding Box).
    */
-  boolean collidesWithWall(float newX, float newY) {
+boolean collidesWithWall(float newX, float newY) {
     float halfSize = tileSize * 0.4;  // Since the character is smaller than the tile size
 
     // Define the bounding box of the character (left, right, top, bottom)
@@ -72,25 +72,25 @@ abstract class Character {
     float bottom = newY + halfSize;
 
     // Determine which grid tiles this box overlaps with
-    int minI = int(left / tileSize);
-    int maxI = int(right / tileSize);
-    int minJ = int(top / tileSize);
-    int maxJ = int(bottom / tileSize);
+    int minRow = int(left / tileSize);
+    int maxRow = int(right / tileSize);
+    int minCol = int(top / tileSize);
+    int maxCol = int(bottom / tileSize);
 
     // Loop through all potentially overlapping tiles
-    for (int i = minI; i <= maxI; i++) {
-      for (int j = minJ; j <= maxJ; j++) {
+    for (int r = minRow; r <= maxRow; r++) {
+      for (int c = minCol; c <= maxCol; c++) {
 
         // If out of bounds, treat it as a wall
-        if (i < 0 || j < 0 || i >= gridSize || j >= gridSize) return true;
+        if (r < 0 || c < 0 || r >= gridSize || c >= gridSize) return true;
 
         // If the tile is a wall or breakable block, check for overlap
-        if (isObstacle(i, j)) {
+        if (isObstacle(r, c)) {
 
           // Tile bounds
-          float tileLeft = i * tileSize;
+          float tileLeft = r * tileSize;
           float tileRight = tileLeft + tileSize;
-          float tileTop = j * tileSize;
+          float tileTop = c * tileSize;
           float tileBottom = tileTop + tileSize;
 
           // Axis-Aligned Bounding Box (AABB) collision check
@@ -106,7 +106,7 @@ abstract class Character {
     return false;
   }
 
-  boolean isObstacle(int i, int j) {
-    return map[i][j] instanceof Wall || map[i][j] instanceof BreakableBlock;
+  boolean isObstacle(int r, int c) {
+    return map[r][c] instanceof Wall || map[r][c] instanceof BreakableBlock;
   }
 }

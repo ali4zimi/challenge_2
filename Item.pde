@@ -1,4 +1,4 @@
-// This is abstract class and not initiatable 
+// This is abstract class and not initiatable
 
 abstract class Item {
   int i, j;                   // Grid coordinates of the item
@@ -15,7 +15,7 @@ abstract class Item {
 
   void draw() {
     if (!collected) {
-      drawIcon(); 
+      drawIcon();
     }
   }
 
@@ -28,7 +28,7 @@ abstract class Item {
 
 class BombPowerItem extends Item {
   BombPowerItem(int i, int j) {
-    super(i, j); 
+    super(i, j);
   }
 
   void drawIcon() {
@@ -43,15 +43,39 @@ class BombPowerItem extends Item {
 
 class SpeedItem extends Item {
   SpeedItem(int i, int j) {
-    super(i, j); 
+    super(i, j);
   }
 
   void drawIcon() {
-    fill(0, 200, 255); 
+    fill(0, 200, 255);
     rect(x + tileSize * 0.25, y + tileSize * 0.25, tileSize * 0.5, tileSize * 0.5);
   }
 
   void applyEffect(Player player) {
-    player.speed += 5; 
+    player.speed += 5;
+  }
+}
+
+
+class MagicPowerItem extends Item {
+  MagicPowerItem(int col, int row) {
+    super(col, row);
+  }
+
+  void drawIcon() {
+    fill(255, 255, 0); // Yellow triangle
+    float centerX = x + tileSize / 2;
+    float centerY = y + tileSize / 2;
+    float halfSize = tileSize * 0.25;
+
+    triangle(
+      centerX, centerY - halfSize, // Top point
+      centerX - halfSize, centerY + halfSize, // Bottom-left
+      centerX + halfSize, centerY + halfSize          // Bottom-right
+      );
+  }
+
+  void applyEffect(Player player) {
+    player.magicPower += 1;
   }
 }

@@ -2,7 +2,8 @@
 // I plan to add more options such as resume game, settings, map designer
 
 class Menu {
-  String[] options = {"Start Game", "Exit Game"};
+  String[] baseOptions = {"New Game", "Resume Game", "Map Designer", "Settings", "Exit Game"};
+  String[] options = baseOptions;
   int selectedOption = 0;
 
   float buttonWidth = 200;
@@ -19,7 +20,7 @@ class Menu {
   }
 
   void draw() {
-    background(50);  // Dark background for menu
+    background(50);
     textSize(32);
     fill(255);
     textAlign(CENTER, CENTER);
@@ -27,9 +28,9 @@ class Menu {
 
     for (int i = 0; i < options.length; i++) {
       if (i == selectedOption) {
-        fill(255, 0, 0);  // Highlight selected option in red
+        fill(255, 0, 0);
       } else {
-        fill(0, 255, 0);  // Regular button color
+        fill(0, 255, 0);
       }
       rect(startX, startY + (i * (buttonHeight + margin)), buttonWidth, buttonHeight);
       fill(255);
@@ -48,22 +49,58 @@ class Menu {
     }
   }
 
+
+
   void performAction() {
-    if (selectedOption == 0) {
-      startGame();
-    } else if (selectedOption == 1) {
+    String selected = options[selectedOption];
+
+    if (selected.equals("New Game")) {
+      newGame();
+    } else if (selected.equals("Resume Game")) {
+      resumeGame();
+    } else if (selected.equals("Map Designer")) {
+      openMapDesigner();
+    } else if (selected.equals("Settings")) {
+      openSettings();
+    } else if (selected.equals("Exit Game")) {
       exit();
     }
   }
 
-  void startGame() {
+  void newGame() {
     println("Starting a new game...");
-    newGame();
+
+    gameState = GameState.PLAYING;
+    initNewGame();
   }
 
   void resumeGame() {
     println("Resuming the game...");
-    gamePaused = false;
+    gameState = GameState.PLAYING;
+  }
+
+  void openMapDesigner() {
+    println("Opening map designer...");
+    //gameState = "mapDesigner";
+  }
+
+  void openSettings() {
+    println("Opening settings...");
+    //gameState = "settings";
+  }
+
+
+  void show() {
+    switch (gameState) {
+    case PAUSED:
+      menu.options = new String[]{"Resume Game", "New Game", "Map Designer", "Settings", "Exit Game"};
+      break;
+    default:
+      menu.options = new String[]{"New Game", "Map Designer", "Settings", "Exit Game"};
+    }
+
+    handleInput();
+    draw();
   }
 
   // I used this mechanism because quiting directly from here makes the program crash

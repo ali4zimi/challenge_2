@@ -1,82 +1,90 @@
 /*
  * Bomberman Game
- * 
- * This game is a simplified version of the classic Bomberman game, where the player controls a character 
+ *
+ * This game is a simplified version of the classic Bomberman game, where the player controls a character
  * in a grid-based environment filled with walls, breakable blocks, bombs, explosions, enemies, and items.
- * The goal of the game is to destroy breakable blocks and enemies using bombs while avoiding explosions and 
- * managing power-ups. The player can place bombs, which will explode after a short delay, clearing obstacles 
+ * The goal of the game is to destroy breakable blocks and enemies using bombs while avoiding explosions and
+ * managing power-ups. The player can place bombs, which will explode after a short delay, clearing obstacles
  * and damaging enemies within the blast radius.
- * 
+ *
  * Author: Ali Baba Azimi
  * Date: 25.03.2025
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import websockets.*;
 
-int gridSize = 11;            // Grid size for the game map
-int tileSize = 80;            // Size of each tile
-Tile[][] map;                 // The game map
-Player player;                // Player object
-boolean gamePaused = true;    // Flag to check if the game is paused
-boolean shouldExit = false;   // Flag to check if the game should exit
-Menu menu;                    // Main menu object
+// Global Variables
+final int gridSize = 11;
+final int tileSize = 80;
 
-ArrayList<Enemy> enemies = new ArrayList<Enemy>();  // List of enemies
-ArrayList<Bomb> bombs = new ArrayList<Bomb>();      // List of bombs placed by the player
-ArrayList<Explosion> explosions = new ArrayList<Explosion>();  // List of explosions
-ArrayList<Item> items = new ArrayList<Item>();      // List of items in the game
+Tile[][] map;
+Player player;
+Menu menu;
 
-WebsocketServer socket;       // WebSocket server for communication
+boolean gameStarted = false;
+boolean gamePaused = true;
+boolean shouldExit = false;
 
+enum GameState {
+  MENU, PLAYING, WIN, LOSE, PAUSED
+}
+GameState gameState = GameState.MENU;
+
+ArrayList<Enemy> enemies = new ArrayList<>();
+ArrayList<Bomb> bombs = new ArrayList<>();
+ArrayList<Explosion> explosions = new ArrayList<>();
+ArrayList<Item> items = new ArrayList<>();
+
+
+WebsocketServer socket;       // WebSocket server for communication, I used to for voice commands
+
+// Setup & Main Loop
 void setup() {
-  size(880, 880);  // Set canvas size to 880x880 pixels
-  menu = new Menu();  // Initialize the menu object
-
-  socket = new WebsocketServer(this, 1337, "/p5websocket");  // Start WebSocket server on port 1337
+  size(880, 880);
+  menu = new Menu();
+  socket = new WebsocketServer(this, 3000, "/bomberman_websocket");
 }
 
 void draw() {
-  background(#13A002);  // Set background color to green
+  //background(gamePaused ? #13A002 : 200);
 
-  if (gamePaused) {
-    menu.draw();  // Draw the menu if the game is paused
-    menu.handleInput();  // Handle input for menu navigation (up, down, enter)
+  if (gameState != GameState.PLAYING) {
+    menu.show();
   } else {
-    background(200);  // Set background to light gray when the game is active
-
-    // Clear randomly generated obstacles around player positions
     clearSurroundingBlocks(1, 1);
     clearSurroundingBlocks(9, 9);
 
-    ArrayList<String> dirs = new ArrayList<>();
-    dirs.add("a");
-
-    // Draw the game map
     drawMap();
-
-    // Draw all placed bombs
     drawBombs();
-
-    // Draw and update all explosions
     drawExplosions();
-
-    // Draw and update items (like power-ups, speed items)
     drawItems();
 
     if (player.alive) {
-      player.update();  // Update the player's state
-      player.handleInput();  // Handle input (movement, actions)
+      player.update();
+      player.handleInput();
     }
 
-    // Update enemies if they are alive
-    for (Enemy enemy : enemies) {
+    // Update enemies
+    Iterator<Enemy> iter = enemies.iterator();
+    while (iter.hasNext()) {
+      Enemy enemy = iter.next();
       if (enemy.alive) {
         enemy.update();
+      } else {
+        iter.remove();
       }
+    }
+
+    if (enemies.isEmpty()) {
+      gameState = GameState.WIN;
+      menu.show();
+      print("You win");
     }
   }
 
-  if (shouldExit) exit();  // Exit the game if the exit flag is true
+  if (shouldExit) exit();
 }
 
 void keyPressed() {
@@ -87,47 +95,57 @@ void keyPressed() {
     menu.downPressed = true;  // Mark that DOWN key was pressed
   } else if (keyCode == ENTER) {
     menu.performAction();  // Perform the action when ENTER is pressed (e.g., start game)
+  } else if (key == 'p' || key == 'P') {
+    gameState = GameState.PAUSED;
   }
 }
 
+
+// Voice command through websockets
+// credits: https://florianschulz.info/stt/
 void webSocketServerEvent(String msg) {
   if (msg.contains("start game")) {
-    newGame();
+    initNewGame();
   } else if (msg.contains("exit game")) {
-    shouldExit = true; 
-  } else if (msg.contains("destroy all walls")) {
-    destroyAllWalls();
+    shouldExit = true;
+  } else if (msg.contains("destroy all blocks")) {
+    player.destroyAllBlocks();
+  } else if (msg.contains("magic power")) {
+    player.destroyAllEnemies();
   }
-  
+
   print(msg);
 }
 
-// Start a new game by initializing the map, player, and enemies
-void newGame() {
-  map = generateMap();  // Generate a new game map
-  player = new Player(1, 1);  // Place player at position (1,1)
+// Game Initialization
+void initNewGame() {
+  enemies.clear();
+  bombs.clear();
+  explosions.clear();
+  items.clear();
 
-  enemies.add(new Enemy(9, 9));  // Add an enemy at position (9,9)
-  
-  gamePaused = false;  
+  map = generateMap();
+  player = new Player(1, 1);
+  enemies.add(new Enemy(9, 9));
 }
+
 
 // Generates the game map with walls, breakable blocks, and grass
 Tile[][] generateMap() {
-  Tile[][] m = new Tile[gridSize][gridSize];  // Create a 2D array for the map
-  for (int i = 0; i < gridSize; i++) {
-    for (int j = 0; j < gridSize; j++) {
-      if (i == 0 || j == 0 || i == gridSize - 1 || j == gridSize - 1) {
-        m[i][j] = new Wall(i, j);  // Set borders of the map as walls
-      } else if (i % 2 == 0 && j % 2 == 0) {
-        m[i][j] = new Wall(i, j);  // Place additional walls in the inner grid at even indices
+  Tile[][] m = new Tile[gridSize][gridSize];
+
+  for (int row = 0; row < gridSize; row++) {
+    for (int col = 0; col < gridSize; col++) {
+      if (row == 0 || col == 0 || row == gridSize - 1 || col == gridSize - 1 || (row % 2 == 0 && col % 2 == 0)) {
+        m[row][col] = new Wall(row, col);
       } else if (random(1) < 0.2) {
-        m[i][j] = new BreakableBlock(i, j);  // Place breakable blocks with a 20% chance
+        m[row][col] = new BreakableBlock(row, col);
       } else {
-        m[i][j] = new Grass(i, j);  // Empty space (grass)
+        m[row][col] = new Grass(row, col);
       }
     }
   }
+
   return m;
 }
 
@@ -135,34 +153,32 @@ Tile[][] generateMap() {
 void drawMap() {
   for (int i = 0; i < gridSize; i++) {
     for (int j = 0; j < gridSize; j++) {
-      map[i][j].draw();  
+      map[i][j].draw();
     }
   }
 }
 
 // Clears the surrounding blocks (up, down, left, right, and diagonals) around a given position to not lock player and enemies
-void clearSurroundingBlocks(int posI, int posJ) {
-  for (int i = posI - 1; i <= posI + 1; i++) {
-    for (int j = posJ - 1; j <= posJ + 1; j++) {
-      if (map[i][j] instanceof BreakableBlock) {
-        map[i][j] = new Grass(i, j);  // Replace breakable block with grass
+void clearSurroundingBlocks(int posRow, int posCol) {
+  for (int row = posRow - 1; row <= posRow + 1; row++) {
+    for (int col = posCol - 1; col <= posCol + 1; col++) {
+      if (map[row][col] instanceof BreakableBlock) {
+        map[row][col] = new Grass(row, col);
       }
     }
   }
 }
-
 // Draw and update all bombs in the game
 void drawBombs() {
   for (int k = bombs.size() - 1; k >= 0; k--) {
     Bomb b = bombs.get(k);
-    b.draw();  // Draw each bomb
+    b.draw();
 
-    // Countdown once per second (60 FPS)
     if (frameCount % 60 == 0) {
-      b.timer--;  // Decrease bomb timer
+      b.timer--;
       if (b.timer <= 0) {
-        b.explode();  // Explode the bomb when the timer reaches zero
-        bombs.remove(k);  // Remove bomb from the list after explosion
+        b.explode();
+        bombs.remove(k);
       }
     }
   }
@@ -172,10 +188,11 @@ void drawBombs() {
 void drawExplosions() {
   for (int k = explosions.size() - 1; k >= 0; k--) {
     Explosion e = explosions.get(k);
-    e.drawFlame();  // Draw the explosion flames
-    e.update();  // Update explosion state (e.g., timer)
+    e.drawFlame();
+    e.update();
+
     if (e.isFinished()) {
-      explosions.remove(k);  // Remove finished explosions
+      explosions.remove(k);
     }
   }
 }
@@ -183,17 +200,6 @@ void drawExplosions() {
 // Draw all items (e.g., power-ups, speed items)
 void drawItems() {
   for (Item item : items) {
-    item.draw();  // Draw each item
-  }
-}
-
-void destroyAllWalls() {
-  for (int i = 0; i < gridSize; i ++) {
-     for (int j = 0; j < gridSize; j++) {
-       if (map[i][j] instanceof BreakableBlock) {
-          map[i][j].breakBlock(); 
-          map[i][j] = new Grass(i, j);
-       }
-     }
+    item.draw();
   }
 }

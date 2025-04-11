@@ -1,13 +1,15 @@
 class Player extends Character {
   String name;           // Player's name (can be used for multiplayer or saving the game state)
   int bombPower;         // Bomb power: determines the explosion range of bombs the player can place
+  int magicPower;
 
   /*
    * Constructor to initialize the player with a specific grid position (i, j).
    */
-  Player(int i, int j) {
-    super(i, j);
+  Player(int row, int col) {
+    super(row, col);
     bombPower = 1;        // Default bomb power
+    magicPower = 0;       // Can be triggered by voice 'Kill all enemies'
     super.speed = 5;      // Default speed for the player
   }
 
@@ -44,7 +46,6 @@ class Player extends Character {
         }
       } else {
         if (key == ' ') {
-          print("Bomb");  // Print message (for debugging)
           player.installBomb();  // Place a bomb
         }
       }
@@ -57,10 +58,10 @@ class Player extends Character {
   void installBomb() {
     // Prevent placing multiple bombs on the same tile
     for (Bomb b : bombs) {
-      if (b.i == i && b.j == j) return;  // Exit if there's already a bomb here
+      if (b.row == row && b.col == col) return;  // Exit if there's already a bomb here
     }
 
-    bombs.add(new Bomb(i, j, bombPower));  // Add a new bomb to the list of bombs
+    bombs.add(new Bomb(row, col, bombPower));  // Add a new bomb to the list of bombs
   }
 
   /*
@@ -68,7 +69,6 @@ class Player extends Character {
    */
   void die() {
     this.alive = false;
-    print("Player died");  // Print death message (for debugging)
   }
 
   /*
@@ -88,5 +88,23 @@ class Player extends Character {
    */
   boolean playerTouches(Item item) {
     return dist(player.x, player.y, item.x + tileSize / 2, item.y + tileSize / 2) < tileSize * 0.5;
+  }
+
+
+  void destroyAllBlocks() {
+    for (int row = 0; row < gridSize; row++) {
+      for (int col = 0; col < gridSize; col++) {
+        if (map[row][col] instanceof BreakableBlock) {
+          map[row][col].breakBlock();
+          map[row][col] = new Grass(row, col);
+        }
+      }
+    }
+  }
+
+  void destroyAllEnemies() {
+    if (magicPower > 0) {
+      enemies.clear();
+    }
   }
 }

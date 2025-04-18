@@ -72,7 +72,7 @@ Since, I have already included the library in my project, there is no need to do
 
 
 #### Collectable Items
-- There are two types of items that the player can collect:
+There are two types of items that the player can collect:
 
 - BombPower 🔴: Increases the player's bomb power.
 

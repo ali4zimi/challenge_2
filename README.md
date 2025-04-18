@@ -9,7 +9,7 @@ This game is a simplified version of the classic Bomberman game, which was one o
 - **Bombs**: The player can place bombs, and after a countdown, they explode, clearing blocks and damaging enemies.
 - **Explosions**: Explosions propagate in all directions, affecting the surrounding tiles.
 - **Enemies**: Enemies appear on the map and are destroyed by explosions.
-- **Items**: Various power-ups, such as bomb range increases and speed boosts, are scattered around the map.
+- **Items**: Various power-ups, such as bomb range increases, speed boosts, and magic power are scattered around the map.
 
 - **Voice Command**: 
 
@@ -74,9 +74,11 @@ Since, I have already included the library in my project, there is no need to do
 #### Collectable Items
 - There are two types of items that the player can collect:
 
-- BombPower: Increases the player's bomb power.
+- BombPower 🔴: Increases the player's bomb power.
 
-- Speed: Increases the player's movement speed.
+- Speed 🟦: Increases the player's movement speed.
+  
+- Magic Power (Yellow Triangle): Activate a voice command that can kill many enemies at a once
 
 
 #### Enemies
